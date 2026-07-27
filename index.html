@@ -941,6 +941,117 @@
   }
   textarea.modal-textarea:focus { border-color: var(--accent); }
 
+    /* ═══════════════════════════════════════
+     WAITING SCREEN
+  ═══════════════════════════════════════ */
+  #screen-waiting {
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: linear-gradient(145deg, #fff7ed 0%, #f5f6f8 50%, #fff7ed 100%);
+  }
+
+  .waiting-card {
+    width: 480px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .waiting-top {
+    background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+    padding: 36px 44px 32px;
+    position: relative;
+  }
+
+  .waiting-top::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 24px;
+    background: var(--surface);
+    border-radius: 24px 24px 0 0;
+  }
+
+  .waiting-org {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .waiting-title {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .waiting-body {
+    padding: 36px 44px 44px;
+  }
+
+  .waiting-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .waiting-msg {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .waiting-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  .waiting-score-preview {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 24px;
+    margin-bottom: 28px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .waiting-score-preview strong {
+    color: var(--text);
+    font-size: 22px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .btn-waiting-admin {
+    width: 100%;
+    background: #ea580c;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 15px;
+    font-family: var(--sans);
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(234,88,12,0.25);
+  }
+
+  .btn-waiting-admin:hover { background: #c2410c; }
+
     .expire-banner {
     background: var(--warn-bg);
     border: 1px solid #fde68a;
@@ -1183,6 +1294,26 @@
   <div class="exam-main" id="exam-main"></div>
 </div>
 
+<!-- ══ WAITING ════════════════════════════════════════════ -->
+<div id="screen-waiting" class="screen">
+  <div class="waiting-card">
+    <div class="waiting-top">
+      <div class="waiting-org">聯經數位 · 資服部</div>
+      <div class="waiting-title">作答完成</div>
+    </div>
+    <div class="waiting-body">
+      <span class="waiting-icon">✅</span>
+      <div class="waiting-msg">您已完成本次測驗</div>
+      <div class="waiting-sub">請交由監考人員輸入管理員密碼<br>以檢視答案與解析</div>
+      <div class="waiting-score-preview">
+        <strong id="waiting-answered">0 / 15</strong>
+        已作答題數
+      </div>
+      <button class="btn-waiting-admin" onclick="openAdminModal()">管理員驗證 → 查看解析</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ RESULT ══════════════════════════════════════════ -->
 <div id="screen-result" class="screen">
   <div class="result-sidebar">
@@ -1284,27 +1415,20 @@ let currentQ = 0;
 let timerInterval = null;
 let timeLeft = 15 * 60;
 let examDone = false;
+const ADMIN_PASSWORD = 'admin1234';
 
 // ─── LOGIN ────────────────────────────────────────────────
-async function doLogin() {
+function getTodayStr() {
+  const n = new Date();
+  return `${n.getFullYear()}${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}`;
+}
+
+function doLogin() {
   const pwd = document.getElementById('login-pwd').value.trim();
   const el = document.getElementById('login-pwd');
-  if (!pwd) return;
-  try {
-    const res = await fetch('/api/verify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pwd, type: 'exam' })
-    });
-    const data = await res.json();
-    if (data.ok) {
-      showScreen('intro');
-    } else {
-      el.classList.add('error');
-      document.getElementById('login-error').style.display = 'block';
-      setTimeout(() => el.classList.remove('error'), 600);
-    }
-  } catch(e) {
+  if (pwd === getTodayStr()) {
+    showScreen('intro');
+  } else {
     el.classList.add('error');
     document.getElementById('login-error').style.display = 'block';
     setTimeout(() => el.classList.remove('error'), 600);
@@ -1442,7 +1566,16 @@ function submitExam(auto = false) {
   examDone = true;
   clearInterval(timerInterval);
   closeModal('modal-end');
-  showResultScreen(auto);
+  // 顯示等待管理員驗證畫面
+  const answered = Object.keys(answers).length;
+  document.getElementById('waiting-answered').textContent = `${answered} / ${questions.length}`;
+  showScreen('waiting');
+  // 若是時間到自動提交，顯示提示
+  if (auto) {
+    document.querySelector('.waiting-sub').innerHTML = '⏱ 考試時間已結束，已自動提交<br>請交由監考人員輸入管理員密碼以檢視答案與解析';
+  }
+  // 暫存 auto 狀態供後續解析使用
+  window._examAuto = auto;
 }
 
 // ─── RESULT ───────────────────────────────────────────────
@@ -1552,17 +1685,28 @@ async function verifyAdmin() {
     const data = await res.json();
     if (data.ok) {
       closeModal('modal-admin');
-      if (!examDone) submitExam();
-      else showResultScreen(false);
+      if (!examDone) {
+        submitExam();
+      } else {
+        showResultScreen(window._examAuto || false);
+      }
     } else {
       document.getElementById('admin-error').style.display = 'block';
       document.getElementById('admin-pwd-input').classList.add('error');
       setTimeout(() => document.getElementById('admin-pwd-input').classList.remove('error'), 500);
     }
   } catch(e) {
-    document.getElementById('admin-error').style.display = 'block';
-    document.getElementById('admin-pwd-input').classList.add('error');
-    setTimeout(() => document.getElementById('admin-pwd-input').classList.remove('error'), 500);
+    // fallback: 本地驗證（開發環境用）
+    const ADMIN_PASSWORD = 'admin1234';
+    if (pwd === ADMIN_PASSWORD) {
+      closeModal('modal-admin');
+      if (!examDone) submitExam();
+      else showResultScreen(window._examAuto || false);
+    } else {
+      document.getElementById('admin-error').style.display = 'block';
+      document.getElementById('admin-pwd-input').classList.add('error');
+      setTimeout(() => document.getElementById('admin-pwd-input').classList.remove('error'), 500);
+    }
   }
 }
 

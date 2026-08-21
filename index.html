@@ -1391,21 +1391,21 @@
 <script>
 // ─── QUESTIONS DATA ──────────────────────────────────────
 const DEFAULT_QUESTIONS = [
-  { category:'Cisco Router — 基礎路由', text:'在 Cisco 路由器上，下列哪個指令可以查看目前的路由表，確認封包會走哪條路徑？', options:['show ip interface brief','show ip route','show running-config','show version'], answer:1, explanation:'`show ip route` 會列出路由器目前的路由表，包含靜態路由、動態路由協定學到的路由及直連網段，是排查封包轉送問題的第一步。`show ip interface brief` 是查看介面狀態與 IP，`show running-config` 是查看目前設定檔。' },
-  { category:'Cisco Router — DHCP', text:'企業內部使用 Cisco 路由器當 DHCP Server，某台電腦一直拿到 169.254.x.x 的 IP 位址，最可能的原因是什麼？', options:['電腦的網卡故障，無法連線','DHCP Server 的 IP Pool 已經派發完畢或服務未啟動，電腦自動指派 APIPA 位址','電腦設定了靜態 IP 與 DHCP 衝突','路由器的 ACL 封鎖了 DHCP 回應封包'], answer:1, explanation:'169.254.x.x 是 APIPA（Automatic Private IP Addressing）位址，代表電腦無法從 DHCP Server 取得 IP 時自動指派的備用位址。最常見原因是 DHCP Pool 已滿、DHCP 服務未啟動，或網路連線問題導致請求沒有回應。' },
-  { category:'Cisco Switch — VLAN', text:'在 Cisco 交換機上，新建立的 VLAN 預設屬於哪個 VLAN？所有 Port 預設都在哪個 VLAN 裡？', options:['VLAN 0','VLAN 1','VLAN 100','VLAN 999'], answer:1, explanation:'Cisco 交換機預設所有 Port 都屬於 VLAN 1（預設 VLAN）。VLAN 1 是出廠預設值，建議在正式環境中將管理流量移到其他 VLAN，避免安全風險。VLAN 0 和 VLAN 4095 是保留不可使用的。' },
-  { category:'Windows Server — Active Directory', text:'在 Active Directory 中，「群組原則（GPO）」主要用來做什麼？', options:['管理 DNS 正向解析記錄','統一設定與管理網域內電腦和使用者的環境，例如桌面設定、密碼原則、軟體派送','監控網路流量與頻寬使用狀況','備份網域控制站的資料庫'], answer:1, explanation:'群組原則（Group Policy Object, GPO）是 Active Directory 的核心管理工具，可以統一設定網域內所有電腦與使用者的系統環境，包含：密碼複雜度規則、桌面鎖定、軟體自動安裝、禁止存取控制台等，大幅降低逐台設定的維護成本。' },
-  { category:'Windows Server — DNS', text:'在 Windows Server 的 DNS 管理中，「A 記錄（A Record）」的用途是什麼？', options:['將網域名稱對應到另一個網域名稱（別名）','將網域名稱對應到 IPv4 位址','設定郵件伺服器的位址','將 IP 位址反查對應到網域名稱'], answer:1, explanation:'A 記錄（Address Record）是 DNS 最基本的記錄類型，負責將主機名稱（如 server.company.com）對應到對應的 IPv4 位址。CNAME 是別名記錄，MX 是郵件伺服器記錄，PTR 是反向查詢記錄。' },
-  { category:'Linux 系統 — 基礎指令', text:'在 Linux 系統中，若要查看某個服務（例如 nginx）目前是否正在執行，使用 systemd 的情況下應執行哪個指令？', options:['ps nginx','systemctl status nginx','service nginx check','netstat nginx'], answer:1, explanation:'`systemctl status nginx` 會顯示 nginx 服務的目前狀態，包含是否執行中（active/inactive）、最近的日誌輸出、PID 等資訊，是 systemd 環境中確認服務狀態的標準指令。`ps` 可以搜尋程序，但無法直接查看服務管理狀態。' },
-  { category:'Linux 系統 — 檔案管理', text:'在 Linux 系統中，指令 `df -h` 的用途是什麼？', options:['刪除空的目錄','以人類可讀的格式（KB/MB/GB）顯示各磁碟分區的使用狀況','顯示目前資料夾下所有檔案的詳細資訊','比較兩個檔案的內容差異'], answer:1, explanation:'`df`（disk free）顯示檔案系統的磁碟使用狀況，`-h` 參數（human-readable）會將數字轉換為 KB、MB、GB 等易讀格式。常用於快速確認各掛載點的剩餘空間，是 Linux 維運最常用的指令之一。' },
-  { category:'VMware — 基礎概念', text:'在 VMware vSphere 環境中，ESXi 主機上的「Snapshot（快照）」功能主要用途是什麼？', options:['取代每日備份，作為長期資料保存方案','在變更或升級前，記錄虛擬機的當前狀態，方便快速還原','將虛擬機複製到另一台 ESXi 主機','壓縮虛擬機的磁碟空間以節省儲存'], answer:1, explanation:'Snapshot 會記錄虛擬機在某個時間點的狀態（包含記憶體、磁碟、設定），常用於系統更新、軟體安裝前的保護措施，若操作失敗可快速還原到快照時的狀態。但 Snapshot 不應作為長期備份使用，長時間保留會影響效能並佔用大量儲存空間。' },
-  { category:'VMware — 網路設定', text:'在 VMware ESXi 中，若要讓同一台實體主機上的多台虛擬機能夠互相通訊，並連接到外部網路，需要設定下列哪個元件？', options:['vMotion 網路','虛擬交換機（vSwitch）','Distributed Resource Scheduler（DRS）','VMware HA'], answer:1, explanation:'虛擬交換機（vSwitch）是 ESXi 上的虛擬網路核心元件，負責連接虛擬機的虛擬網卡（vNIC）與實體網卡（pNIC），讓虛擬機之間可以互通，並透過實體網卡連接到外部網路。vMotion 是即時遷移功能，DRS 是資源調度，HA 是高可用性功能。' },
-  { category:'Docker — 基礎概念', text:'Docker 中，「Image（映像檔）」與「Container（容器）」的關係，下列哪個描述最正確？', options:['Image 與 Container 是完全相同的東西，只是名稱不同','Image 是唯讀的模板，Container 是由 Image 啟動後執行中的實例','Container 是唯讀的，Image 是可以修改的','每個 Container 只能對應一個專屬的 Image，無法共用'], answer:1, explanation:'Docker Image 是唯讀的應用程式模板，包含程式碼、執行環境、設定檔等。Container 是由 Image 啟動後產生的執行實例，可以在同一個 Image 上啟動多個 Container。就像程式碼與執行中的程序的關係，Image 是定義，Container 是運行中的個體。' },
-  { category:'Docker — 基礎操作', text:'在 Docker 環境中，若要查看目前主機上所有正在執行中的容器（包含已停止的），應使用哪個指令？', options:['docker images','docker ps -a','docker container show','docker list all'], answer:1, explanation:'`docker ps` 只顯示執行中的容器，加上 `-a`（all）參數則會顯示所有容器，包含已停止（Exited）的。`docker images` 是列出本機的 Image 清單，不是容器清單。這是 Docker 日常維運最常用的查詢指令之一。' },
-  { category:'Kubernetes — 基礎概念', text:'在 Kubernetes 中，「Pod」是最小的部署單位，下列哪個描述最正確？', options:['一個 Pod 只能包含一個 Container，不能包含多個','一個 Pod 可以包含一個或多個緊密相關的 Container，共享網路與儲存','Pod 是永久性的，刪除後資料不會消失','Pod 直接等同於一台虛擬機'], answer:1, explanation:'Pod 是 Kubernetes 的最小調度單位，可以包含一個或多個緊密協作的 Container，這些 Container 共享同一個網路命名空間（相同 IP）和儲存 Volume。常見的 Sidecar 模式就是在同一個 Pod 裡放主程式與輔助容器（如日誌收集器）。Pod 本身是短暫的，重啟後資料不會保留。' },
-  { category:'雲端概念 — IaaS/PaaS/SaaS', text:'下列哪個服務是「IaaS（基礎設施即服務）」最典型的例子？', options:['Google Workspace（Gmail、Drive）','Microsoft Azure 虛擬機器（Azure VM）','Salesforce CRM','Vercel 前端部署平台'], answer:1, explanation:'IaaS 提供虛擬化的基礎設施資源（虛擬機、網路、儲存），使用者需自行管理作業系統與以上的軟體層。Azure VM、AWS EC2、GCP Compute Engine 都是典型的 IaaS 服務。Google Workspace 和 Salesforce 是 SaaS，Vercel 接近 PaaS。' },
-  { category:'網路基礎 — TCP/IP', text:'在 TCP/IP 網路中，當你在瀏覽器輸入一個網址（例如 www.example.com），電腦在建立連線之前，第一步會先做什麼？', options:['直接向目標伺服器發送 HTTP 請求','向 DNS Server 查詢該網址對應的 IP 位址','先發送 ARP 廣播尋找目標 MAC 位址','先透過 ICMP 測試目標是否可達'], answer:1, explanation:'瀏覽器在建立連線前，需要先知道目標伺服器的 IP 位址。電腦會先查詢本機的 DNS 快取，若無記錄則向設定的 DNS Server 發送查詢請求，取得 IP 位址後才能建立 TCP 連線並送出 HTTP 請求。這是網路通訊的基本流程。' },
-  { category:'資安基礎 — 端點管理', text:'公司電腦定期透過 WSUS 派送 Windows 安全性更新，主要目的是什麼？', options:['增加電腦的執行速度與硬體效能','修補作業系統與軟體的已知安全漏洞，防止被惡意程式利用','自動備份使用者的重要檔案','更新電腦的 BIOS 韌體版本'], answer:1, explanation:'WSUS（Windows Server Update Services）讓 IT 管理員可以集中管理與派送 Microsoft 的安全性更新，核心目的是修補已知的系統漏洞，避免攻擊者利用未修補的弱點入侵端點。定期更新是端點安全最基本也最重要的防護措施之一。' }
+  { category:'Linux — 系統診斷', text:'在 Linux 伺服器上，應用程式回報寫入檔案失敗，但 `df -h` 顯示磁碟還有 20GB 可用空間。下列哪個指令可以進一步診斷真正的原因？', options:['lsblk','df -i','du -sh /*','fdisk -l'], answer:1, explanation:'`df -i` 會顯示各分區的 Inode 使用狀況。Linux 檔案系統同時維護「資料區塊（Block）」與「索引節點（Inode）」兩種資源，當大量小檔案（如日誌片段、session 檔）耗盡 Inode 時，即使磁碟空間充足，系統也無法再建立新檔案，會出現「No space left on device」錯誤。`df -h` 只看 Block 使用量，無法反映 Inode 問題。' },
+  { category:'Linux — 網路診斷', text:'在 Linux 伺服器上，你懷疑某個 Port（例如 8080）沒有被任何程序監聽，導致連線失敗。下列哪個指令可以確認哪些 Port 正在被監聽，以及對應的程序？', options:['ping localhost:8080','ss -tlnp','traceroute localhost','curl localhost'], answer:1, explanation:'`ss -tlnp` 是現代 Linux 推薦的 socket 狀態查詢工具（取代 netstat）。各參數意義：`-t` 只看 TCP、`-l` 只看 listening 狀態、`-n` 顯示數字 Port（不解析服務名）、`-p` 顯示對應的程序名稱與 PID。可以快速確認哪個程序在監聽哪個 Port，是排查服務未啟動或 Port 衝突的第一步。' },
+  { category:'Linux — 系統資源', text:'在 Linux 中，使用 `top` 指令觀察系統時，發現某個程序的 CPU 使用率持續接近 100%，但系統的 `load average` 數值卻很低。這最可能代表什麼情況？', options:['系統記憶體不足，正在頻繁使用 Swap','該程序是 CPU 密集型（CPU-bound）運算，但目前系統整體負載不高，只有單一程序在消耗資源','磁碟 I/O 發生阻塞，導致程序卡住','網路頻寬已達上限'], answer:1, explanation:'`load average` 代表系統整體的平均等待執行任務數（包含 CPU 排隊與 I/O 等待）。若單一程序 CPU 100% 但 load average 低，代表整體系統沒有其他等待中的任務，只是這個程序本身在做密集運算（如加密、壓縮、數學計算）。若是 I/O 阻塞，load average 通常會明顯偏高，且程序狀態會顯示為 D（Uninterruptible Sleep）。' },
+  { category:'Docker — 基礎概念', text:'在 Docker 中，執行 `docker run -d -p 8080:80 nginx` 這個指令，下列哪個描述是正確的？', options:['在前景執行 nginx，並將容器的 8080 Port 對應到主機的 80 Port','在背景執行 nginx，並將主機的 8080 Port 對應到容器的 80 Port','在背景執行 nginx，但不開放任何 Port','將 nginx 映像檔下載但不啟動'], answer:1, explanation:'`-d` 是 detach（背景執行），`-p 主機Port:容器Port` 是 Port 對應。所以 `-p 8080:80` 代表外部訪問主機的 8080 Port，會被轉發到容器內部的 80 Port（nginx 預設監聽 80）。這是啟動 Web 服務最常見的指令格式。' },
+  { category:'Docker — 實務操作', text:'在使用 Docker 時，若想讓容器內的應用程式寫入的資料，在容器刪除後仍然保留，應該使用哪種方式？', options:['將資料寫入容器內的 /tmp 目錄','使用 Docker Volume 將資料目錄掛載到主機','使用 docker commit 定期封裝容器為新映像檔','增加容器的記憶體配置'], answer:1, explanation:'Docker Volume 是 Docker 管理的持久化儲存空間，資料存放在主機上而非容器的可寫層，因此容器刪除後資料仍然存在。/tmp 是暫存目錄，隨容器消失；`docker commit` 會將當前狀態封裝為 Image，但這不是持久化資料的正確做法，且每次都要手動操作。' },
+  { category:'Kubernetes — 基礎概念', text:'在 Kubernetes 中，若要確保某個應用程式（Deployment）在任何時候都維持 3 個 Pod 副本在執行，當某個 Pod 當掉時會自動重新建立，這是由哪個元件負責管理的？', options:['kubelet','ReplicaSet（由 Deployment 管理）','kube-proxy','etcd'], answer:1, explanation:'Deployment 底層透過 ReplicaSet 來維持指定數量的 Pod 副本。當某個 Pod 故障或被刪除，ReplicaSet Controller 會偵測到實際副本數低於期望值，並自動建立新的 Pod 補足。這是 Kubernetes 自我修復（Self-healing）能力的核心機制。' },
+  { category:'Kubernetes — 服務存取', text:'在 Kubernetes 中，若要讓叢集外部的流量（例如使用者的瀏覽器）能夠存取到叢集內部的應用程式，通常應建立哪種類型的 Service？', options:['ClusterIP','NodePort 或 LoadBalancer','ExternalName','Headless Service'], answer:1, explanation:'ClusterIP 只能在叢集內部存取。要讓外部流量進來，NodePort 會在每台節點開放一個固定 Port，LoadBalancer 則會透過雲端供應商（AWS ELB、GCP LB）建立外部負載均衡器。在雲端環境通常用 LoadBalancer，本地測試環境用 NodePort。' },
+  { category:'AWS — IAM 權限管理', text:'在 AWS 中，一台 EC2 上的應用程式需要存取 S3 Bucket，下列哪種做法是最安全的正確方式？', options:['將 AWS Access Key 與 Secret Key 直接寫入應用程式的設定檔或環境變數','建立 IAM Role 並附加到 EC2 執行個體，讓應用程式透過 Instance Metadata 自動取得臨時憑證','在 EC2 上建立一個 IAM User，並將金鑰存放在 ~/.aws/credentials','開放 S3 Bucket 為公開存取，不需要身份驗證'], answer:1, explanation:'將金鑰寫死在程式或設定檔中風險極高，一旦程式碼外洩或 EC2 被入侵，金鑰會直接暴露。正確做法是建立 IAM Role（附加所需的最小權限 Policy），再將 Role 附加到 EC2。應用程式透過 Instance Metadata Service（IMDS）自動取得會定期輪換的臨時憑證，不需要管理任何長期金鑰。' },
+  { category:'AWS — 網路安全', text:'在 AWS VPC 中，Security Group 與 Network ACL（NACL）的主要差異，下列哪個描述是正確的？', options:['Security Group 是無狀態（Stateless）的，NACL 是有狀態（Stateful）的','Security Group 是有狀態（Stateful）的，套用在資源層級；NACL 是無狀態（Stateless）的，套用在子網路層級','兩者功能完全相同，只是套用的對象不同','NACL 只能設定允許規則，Security Group 才能設定拒絕規則'], answer:1, explanation:'Security Group 是有狀態的防火牆（允許進入的流量，回應封包自動放行），套用在 EC2、RDS 等資源層級，只有允許規則。NACL 是無狀態的（進出規則需分別設定），套用在 Subnet 層級，可設定允許與拒絕規則，是 VPC 的第二道防線。兩者通常搭配使用做深度防禦。' },
+  { category:'AWS — 高可用架構', text:'在 AWS 上設計一個高可用的 Web 應用程式架構，下列哪個組合最能確保單一 AZ 故障時服務不中斷？', options:['單一 EC2 + 定期 AMI 備份','Application Load Balancer + 多個 AZ 的 Auto Scaling Group + RDS Multi-AZ','單一大型 EC2（Scale Up）+ S3 備份','CloudFront + 單一 EC2'], answer:1, explanation:'高可用架構的標準組合：ALB 做流量分散與健康檢查、Auto Scaling Group 跨多個 AZ 自動調整 EC2 數量（當某 AZ 的 EC2 故障，ALB 自動將流量導到其他 AZ）、RDS Multi-AZ 確保資料庫有同步的備援節點。單一 EC2 無論多大規格，只要該 AZ 故障就會中斷服務。' },
+  { category:'CI/CD — 基礎概念', text:'在 CI/CD 流程中，「CI（Continuous Integration，持續整合）」的主要目的是什麼？', options:['將應用程式自動部署到正式環境','開發者每次提交程式碼後，自動執行建置與測試，盡早發現問題','自動監控正式環境的服務狀態','管理多個版本的程式碼分支'], answer:1, explanation:'CI 的核心概念是讓開發者頻繁地將程式碼合併到主分支，每次合併時自動觸發建置（Build）與測試（Test），確保新的程式碼不會破壞現有功能。透過自動化提早發現整合問題，降低修復成本。CD（Continuous Delivery/Deployment）才是負責自動部署的環節。' },
+  { category:'GitOps — 基礎概念', text:'GitOps 的核心概念是什麼？', options:['將所有 Git 操作（commit、merge）自動化，不需要人工介入','以 Git Repository 作為系統基礎設施與應用程式的唯一事實來源（Single Source of Truth），透過 Git 的變更來驅動部署','使用 GitHub 來管理所有的 Kubernetes 叢集節點','將應用程式的原始碼與容器映像檔存放在同一個 Repository'], answer:1, explanation:'GitOps 的核心是將基礎設施與應用程式的期望狀態（如 Kubernetes YAML、Terraform 設定）存放在 Git 中，任何變更都透過 Git commit 觸發，由工具（如 Argo CD、Flux）自動同步到目標環境。Git 成為整個系統狀態的唯一事實來源，讓部署流程可追蹤、可還原。' },
+  { category:'容器化 — Docker Compose', text:'`docker-compose.yml` 主要用來解決什麼問題？', options:['建立 Docker 映像檔（Image）的分層結構','定義與管理多個容器組成的應用程式，一次啟動所有相關服務','將容器部署到多台主機組成的叢集','監控容器的 CPU 與記憶體使用狀況'], answer:1, explanation:'Docker Compose 透過一個 YAML 檔案定義多個服務（如 Web、DB、Cache）的容器設定，包含映像檔、環境變數、Port、Volume、網路等，只需執行 `docker-compose up` 就能一次啟動整個應用程式環境。適合本地開發與測試環境，簡化多容器管理。' },
+  { category:'雲端架構 — 高可用性', text:'在雲端架構設計中，「多可用區（Multi-AZ）」部署的主要目的是什麼？', options:['降低運算成本，透過多個區域分散費用','當某個資料中心（可用區）發生故障時，服務可以自動切換到其他可用區，確保服務持續運作','加快應用程式的回應速度','讓不同地區的使用者都能存取到最近的伺服器'], answer:1, explanation:'可用區（Availability Zone, AZ）是雲端供應商在同一地理區域內相互獨立的資料中心。Multi-AZ 部署讓應用程式同時運行在多個 AZ，當某個 AZ 因電力、網路或硬體故障而中斷時，流量自動切換到其他 AZ，達到高可用性（HA）的目的。' },
+  { category:'MS SQL — 基礎維運', text:'在 MS SQL Server 中，下列哪種備份方式可以在還原時指定還原到特定的時間點（Point-in-Time Recovery）？', options:['只做完整備份（Full Backup）就足夠','搭配完整備份（Full Backup）與交易日誌備份（Transaction Log Backup），且復原模式需設為 FULL','只做差異備份（Differential Backup）','使用 SQL Server 的快照（Snapshot）功能'], answer:1, explanation:'時點復原（PITR）需要兩個條件：資料庫的復原模式（Recovery Model）設為 FULL，以及定期進行交易日誌備份（Transaction Log Backup）。還原時先還原完整備份，再依序套用交易日誌備份，就能還原到日誌涵蓋範圍內的任意時間點。僅做完整備份只能還原到備份當下的狀態。' }
 ];
 
 // ─── STATE ───────────────────────────────────────────────
@@ -1415,7 +1415,6 @@ let currentQ = 0;
 let timerInterval = null;
 let timeLeft = 15 * 60;
 let examDone = false;
-const ADMIN_PASSWORD = 'admin1234';
 
 // ─── LOGIN ────────────────────────────────────────────────
 function getTodayStr() {
@@ -1423,15 +1422,33 @@ function getTodayStr() {
   return `${n.getFullYear()}${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}`;
 }
 
-function doLogin() {
+async function doLogin() {
   const pwd = document.getElementById('login-pwd').value.trim();
   const el = document.getElementById('login-pwd');
-  if (pwd === getTodayStr()) {
-    showScreen('intro');
-  } else {
-    el.classList.add('error');
-    document.getElementById('login-error').style.display = 'block';
-    setTimeout(() => el.classList.remove('error'), 600);
+  if (!pwd) return;
+  try {
+    const res = await fetch('/api/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pwd, type: 'exam' })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showScreen('intro');
+    } else {
+      el.classList.add('error');
+      document.getElementById('login-error').style.display = 'block';
+      setTimeout(() => el.classList.remove('error'), 600);
+    }
+  } catch(e) {
+    const n = new Date();
+    const today = `${n.getFullYear()}${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}`;
+    if (pwd === today) { showScreen('intro'); }
+    else {
+      el.classList.add('error');
+      document.getElementById('login-error').style.display = 'block';
+      setTimeout(() => el.classList.remove('error'), 600);
+    }
   }
 }
 

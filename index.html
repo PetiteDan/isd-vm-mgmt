@@ -1447,32 +1447,17 @@ function getTodayStr() {
   return `${n.getFullYear()}${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}`;
 }
 
-async function doLogin() {
+function doLogin() {
   const pwd = document.getElementById('login-pwd').value.trim();
   const el = document.getElementById('login-pwd');
-  if (!pwd) return;
-  try {
-    const res = await fetch('/api/verify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pwd, type: 'exam' })
-    });
-    const data = await res.json();
-    if (data.ok) { showScreen('intro'); }
-    else {
-      el.classList.add('error');
-      document.getElementById('login-error').style.display = 'block';
-      setTimeout(() => el.classList.remove('error'), 600);
-    }
-  } catch(e) {
-    const n = new Date();
-    const today = `${n.getFullYear()}${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}`;
-    if (pwd === today) { showScreen('intro'); }
-    else {
-      el.classList.add('error');
-      document.getElementById('login-error').style.display = 'block';
-      setTimeout(() => el.classList.remove('error'), 600);
-    }
+  const n = new Date();
+  const today = `${n.getFullYear()}${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}`;
+  if (pwd === today) {
+    showScreen('intro');
+  } else {
+    el.classList.add('error');
+    document.getElementById('login-error').style.display = 'block';
+    setTimeout(() => el.classList.remove('error'), 600);
   }
 }
 
@@ -1734,8 +1719,8 @@ async async function verifyAdmin() {
       setTimeout(() => document.getElementById('admin-pwd-input').classList.remove('error'), 500);
     }
   } catch(e) {
-    const ADMIN_PASSWORD = 'admin1234';
-    if (pwd === ADMIN_PASSWORD) {
+    // fallback：API 不可用時用預設密碼
+    if (pwd === 'admin1234') {
       closeModal('modal-admin');
       if (!examDone) submitExam();
       else showResultScreen(window._examAuto || false);

@@ -471,6 +471,26 @@
     border-top: 1px solid var(--border);
   }
 
+  .sidebar-version {
+    padding: 0 0 10px 0;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+  }
+
+  .sidebar-version span {
+    display: block;
+  }
+
+  .sidebar-version .ver-tag {
+    color: #ea580c;
+    font-weight: 700;
+  }
+
   .btn-end {
     background: var(--wrong);
     color: #fff;
@@ -1287,6 +1307,10 @@
     </div>
     <div class="q-grid" id="q-grid"></div>
     <div class="sidebar-actions">
+      <div class="sidebar-version">
+        <span class="ver-tag">v1.0.3</span>
+        <span>更新：2026-08-21</span>
+      </div>
       <button class="btn-end" onclick="confirmEnd()">✓ 作答結束</button>
       <button class="btn-admin" onclick="openAdminModal()">管理員：答案解析</button>
     </div>
@@ -1415,6 +1439,7 @@ let currentQ = 0;
 let timerInterval = null;
 let timeLeft = 15 * 60;
 let examDone = false;
+const ADMIN_PASSWORD = 'admin1234';
 
 // ─── LOGIN ────────────────────────────────────────────────
 function getTodayStr() {
@@ -1433,9 +1458,8 @@ async function doLogin() {
       body: JSON.stringify({ password: pwd, type: 'exam' })
     });
     const data = await res.json();
-    if (data.ok) {
-      showScreen('intro');
-    } else {
+    if (data.ok) { showScreen('intro'); }
+    else {
       el.classList.add('error');
       document.getElementById('login-error').style.display = 'block';
       setTimeout(() => el.classList.remove('error'), 600);
@@ -1690,7 +1714,7 @@ function openAdminModal() {
   openModal('modal-admin');
 }
 
-async function verifyAdmin() {
+async async function verifyAdmin() {
   const pwd = document.getElementById('admin-pwd-input').value;
   if (!pwd) return;
   try {
@@ -1702,18 +1726,14 @@ async function verifyAdmin() {
     const data = await res.json();
     if (data.ok) {
       closeModal('modal-admin');
-      if (!examDone) {
-        submitExam();
-      } else {
-        showResultScreen(window._examAuto || false);
-      }
+      if (!examDone) submitExam();
+      else showResultScreen(window._examAuto || false);
     } else {
       document.getElementById('admin-error').style.display = 'block';
       document.getElementById('admin-pwd-input').classList.add('error');
       setTimeout(() => document.getElementById('admin-pwd-input').classList.remove('error'), 500);
     }
   } catch(e) {
-    // fallback: 本地驗證（開發環境用）
     const ADMIN_PASSWORD = 'admin1234';
     if (pwd === ADMIN_PASSWORD) {
       closeModal('modal-admin');
